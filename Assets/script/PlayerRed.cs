@@ -9,6 +9,8 @@ public class PlayerRed : MonoBehaviour
     float jumpForce;
     public GameObject attackCollider;
 
+    public Transform target;
+
     int playerLife;
     [HideInInspector]
     public Animator myAnim;
@@ -16,8 +18,7 @@ public class PlayerRed : MonoBehaviour
     SpriteRenderer mySr;
 
     public bool isJumpPressed, canJump, isAttack, isHurt, canBeHurt;//是否在跳跃过程中
-
-
+    
     private void Awake()
     {
         myAnim = GetComponent<Animator>();
@@ -38,10 +39,11 @@ public class PlayerRed : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown("w") && canJump && !isHurt)        //跳跃检测，第二处不同
+        if (Input.GetKeyDown("k") && canJump && !isHurt)        //跳跃检测，第二处不同
         {
             isJumpPressed = true;
             canJump = false;
+            
         }
         if (Input.GetKeyDown("j") && !isHurt)//不同
         {
@@ -52,12 +54,28 @@ public class PlayerRed : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        Vector3 targetPos = target.position;
         Vector2 position = myRigi.position;//记录初始位置
         if (isAttack)
         {
             moveSpeed = 0;
         }
-        if (Input.GetKey("a"))//向左移动，第三处不同
+        bool rtemp = true;
+        bool ltemp = true;
+        if (position.x - targetPos.x > 20)
+        {
+            rtemp = false;
+        }
+        else if (targetPos.x - position.x > 20)
+        {
+            ltemp = false;
+        }
+        else
+        {
+            rtemp = true;
+            ltemp = true;
+        }
+        if (Input.GetKey("a") && ltemp) //向左移动，第三处不同
         {
             myAnim.SetBool("Run", true);
             if (moveSpeed > 0)
@@ -66,7 +84,7 @@ public class PlayerRed : MonoBehaviour
             }
             position.x -= moveSpeed * Time.fixedDeltaTime;
         }
-        else if (Input.GetKey("d"))//向右移动，第四处不同
+        else if (Input.GetKey("d") && rtemp) //向右移动，第四处不同
         {
             myAnim.SetBool("Run", true);
             if (moveSpeed > 0)

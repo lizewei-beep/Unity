@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ground
   - Enemy
+  - PlayerAttack
   layers:
   - Default
   - TransparentFX
@@ -14,7 +15,7 @@ TagManager:
   - Water
   - UI
   - Player
-  - 
+  - Ground
   - 
   - 
   - 
@@ -66,9 +67,6 @@ TagManager:
     locked: 0
   - name: Water
     uniqueID: 430265683
-    locked: 0
-  - name: Door
-    uniqueID: 3289993061
     locked: 0
   - name: Player
     uniqueID: 743870719
