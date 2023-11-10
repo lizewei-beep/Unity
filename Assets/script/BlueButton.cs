@@ -13,8 +13,9 @@ public class BlueButton : MonoBehaviour
     {
         if (collision.tag == "Ground")
         {
-            playerScript.canJump = true;
+            playerScript.canJump = 2;
             playerScript.myAnim.SetBool("Jump", false);
+            playerScript.canDash = true;
         }
     }
 }

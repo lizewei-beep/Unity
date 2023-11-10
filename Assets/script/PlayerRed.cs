@@ -17,8 +17,14 @@ public class PlayerRed : MonoBehaviour
     Rigidbody2D myRigi;
     SpriteRenderer mySr;
 
-    public bool isJumpPressed, canJump, isAttack, isHurt, canBeHurt;//是否在跳跃过程中
-    
+    public bool isJumpPressed, isAttack, isHurt, canBeHurt;//是否在跳跃过程中
+    public int canJump;
+
+    public bool canDash = true;
+    bool isDashing;
+    float dashingPower = 20f;
+    float dashingTime = 0.1f;
+    float noDashTime = 1f;
     private void Awake()
     {
         myAnim = GetComponent<Animator>();
@@ -26,40 +32,64 @@ public class PlayerRed : MonoBehaviour
         mySr = GetComponent<SpriteRenderer>();
 
         isJumpPressed = false;
-        canJump = true;
+        canJump = 2;
         moveSpeed = 4.0f;
-        jumpForce = 22.0f;
+        jumpForce = 14.0f;
         isAttack = false;
         isHurt = false;
         canBeHurt = true;
-
-        playerLife = 3;
+        playerLife = 10;
+        HealthBar.HealthMax = playerLife;
+        HealthBar.HealthCurrent = playerLife;
     }
 
 
     void Update()
     {
-        if (Input.GetKeyDown("k") && canJump && !isHurt)        //跳跃检测，第二处不同
+        if (isDashing)
         {
-            isJumpPressed = true;
-            canJump = false;
-            
+            return;
+        }
+        if (myRigi.velocity.y < 0) 
+        {
+            myRigi.gravityScale = 7;
+        }
+        else
+        {
+            myRigi.gravityScale = 4;
+        }
+        if (Input.GetKeyDown("k") && canJump>0 && !isHurt)        //跳跃检测，第二处不同
+        {
+            canDash = false;
+            if (canJump == 2)
+            {
+                isJumpPressed = true;
+            }
+            else if (canJump == 1)
+            {
+                myRigi.velocity = Vector2.up * moveSpeed * 4;
+            }
+            canJump--;
+
         }
         if (Input.GetKeyDown("j") && !isHurt)//不同
         {
             myAnim.SetTrigger("Attack");
             isAttack = true;
-            canJump = false;
+        }
+        if (Input.GetKeyDown("l") && canDash)
+        {
+            StartCoroutine(Dash());
         }
     }
     private void FixedUpdate()
     {
+        if (isDashing)
+        {
+            return;
+        }
         Vector3 targetPos = target.position;
         Vector2 position = myRigi.position;//记录初始位置
-        if (isAttack)
-        {
-            moveSpeed = 0;
-        }
         bool rtemp = true;
         bool ltemp = true;
         if (position.x - targetPos.x > 20)
@@ -110,9 +140,10 @@ public class PlayerRed : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Enemy" && !isHurt && canBeHurt)
+        if ((collision.tag == "Enemy" || collision.CompareTag("Trap")) && !isHurt && canBeHurt)
         {
             playerLife--;
+            HealthBar.HealthCurrent = playerLife;
             if (playerLife >= 1)
             {
                 isHurt = true;
@@ -134,6 +165,7 @@ public class PlayerRed : MonoBehaviour
                 isHurt = true;
                 moveSpeed = 0;
                 myAnim.SetBool("Die", true);
+                StartCoroutine("AfterDie");
             }
         }
     }
@@ -149,9 +181,10 @@ public class PlayerRed : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.tag == "Enemy" && !isHurt && canBeHurt)
+        if ((collision.tag == "Enemy" || collision.CompareTag("Trap")) && !isHurt && canBeHurt)
         {
             playerLife--;
+            HealthBar.HealthCurrent = playerLife;
             if (playerLife >= 1)
             {
                 isHurt = true;
@@ -173,6 +206,7 @@ public class PlayerRed : MonoBehaviour
                 isHurt = true;
                 moveSpeed = 0;
                 myAnim.SetBool("Die", true);
+                StartCoroutine("AfterDie");
             }
         }
     }
@@ -180,7 +214,6 @@ public class PlayerRed : MonoBehaviour
     {
         moveSpeed = 4.0f;
         isAttack = false;
-        canJump = true;
         myAnim.ResetTrigger("Attack");
     }
 
@@ -198,5 +231,32 @@ public class PlayerRed : MonoBehaviour
     public void SetAttackColliderOff()
     {
         attackCollider.SetActive(false);
+    }
+    IEnumerator AfterDie()
+    {
+        yield return new WaitForSeconds(1.0f);
+        mySr.material.color = new Color(mySr.color.r, mySr.color.g, mySr.color.b, 0.5f);
+        yield return new WaitForSeconds(1.0f);
+    }
+    IEnumerator Dash()
+    {
+        canDash = false;
+        isDashing = true;
+        canBeHurt = false;
+        float dashingGravity = myRigi.gravityScale;
+        myRigi.gravityScale = 0f;
+        myRigi.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+        yield return new WaitForSeconds(dashingTime);
+        myRigi.gravityScale = dashingGravity;
+        isDashing = false;
+        Vector3 targetPos = target.position;
+        Vector2 position = myRigi.position;//记录初始位置
+        if (position.x - targetPos.x > 20 || targetPos.x - position.x > 20)
+        {
+            myRigi.position = new Vector2(targetPos.x, targetPos.y);
+        }
+        yield return new WaitForSeconds(noDashTime);
+        canDash = true;
+        canBeHurt = true;
     }
 }

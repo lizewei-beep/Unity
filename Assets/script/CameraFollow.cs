@@ -13,8 +13,8 @@ public class CameraFollow : MonoBehaviour
     public Vector2 minPosition;
     public Vector2 maxPosition;
 
-    int disX = 59;
-    int disY = 7;
+    public int disX;
+    public int disY;
 
     // Start is called before the first frame update
     void Start()

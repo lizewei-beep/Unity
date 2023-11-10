@@ -11,14 +11,20 @@ public class PlayerBlue : MonoBehaviour
 
     public Transform target;
 
-    int playerLife;
+    public int playerLife;
     [HideInInspector]
     public Animator myAnim;
     Rigidbody2D myRigi;
     SpriteRenderer mySr;
 
-    public bool isJumpPressed, canJump, isAttack, isHurt, canBeHurt;//ÊÇ·ñÔÚÌøÔ¾¹ý³ÌÖÐ
+    public bool isJumpPressed, isAttack, isHurt, canBeHurt;//ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ô¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public int canJump;
 
+    public bool canDash = true;
+    bool isDashing;
+    float dashingPower = 20f;
+    float dashingTime = 0.1f;
+    float noDashTime = 1f;
 
     private void Awake()
     {
@@ -27,39 +33,66 @@ public class PlayerBlue : MonoBehaviour
         mySr = GetComponent<SpriteRenderer>();
 
         isJumpPressed = false;
-        canJump = true;
+        canJump = 2;
         moveSpeed = 4.0f;
-        jumpForce = 22.0f;
+        jumpForce = 14.0f;
         isAttack = false;
         isHurt = false;
         canBeHurt = true;
-
-        playerLife = 3;
+        playerLife = 10;
+        HealthBar1.HealthMax = playerLife;
+        HealthBar1.HealthCurrent = playerLife;
     }
 
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Keypad2) && canJump && !isHurt)       //ÌøÔ¾¼ì²â£¬µÚ¶þ´¦²»Í¬
+
+        HealthBar1.HealthCurrent = playerLife;
+        if(isDashing)
         {
-            isJumpPressed = true;
-            canJump = false;
+            return;
         }
-        if (Input.GetKeyDown(KeyCode.Keypad1) && !isHurt)//²»Í¬
+        if (myRigi.velocity.y < 0)
+        {
+            myRigi.gravityScale = 7;
+        }
+        else
+        {
+            myRigi.gravityScale = 4;
+        }
+        if (Input.GetKeyDown(KeyCode.Keypad2) && canJump>0 && !isHurt)       //ï¿½ï¿½Ô¾ï¿½ï¿½â£¬ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½Í¬
+        {
+            canDash = false;
+            if (canJump == 2)
+            {
+                isJumpPressed = true;
+            }
+            else if (canJump == 1)
+            {
+                myRigi.velocity = Vector2.up * moveSpeed * 4;
+            }
+            canJump--;
+        }
+        if (Input.GetKeyDown(KeyCode.Keypad1) && !isHurt)//ï¿½ï¿½Í¬
         {
             myAnim.SetTrigger("Attack");
             isAttack = true;
             //canJump = false;
         }
+        if (Input.GetKeyDown(KeyCode.Keypad3) && canDash)
+        {
+            StartCoroutine(Dash());
+        }
     }
     private void FixedUpdate()
     {
-        Vector3 targetPos = target.position;
-        Vector2 position = myRigi.position;//¼ÇÂ¼³õÊ¼Î»ÖÃ
-        if (isAttack) 
+        if (isDashing)
         {
-            moveSpeed = 0;
+            return;
         }
+        Vector3 targetPos = target.position;
+        Vector2 position = myRigi.position;//ï¿½ï¿½Â¼ï¿½ï¿½Ê¼Î»ï¿½ï¿½
         bool rtemp = true;
         bool ltemp = true;
         if (position.x - targetPos.x > 20)
@@ -76,16 +109,16 @@ public class PlayerBlue : MonoBehaviour
             ltemp = true;
         }
 
-        if (Input.GetKey(KeyCode.LeftArrow) && ltemp) //Ïò×óÒÆ¶¯£¬µÚÈý´¦²»Í¬
+        if (Input.GetKey(KeyCode.LeftArrow) && ltemp) //ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬
         {
             myAnim.SetBool("Run", true);
             if (moveSpeed > 0)
             {
-                transform.localScale = new Vector3(-1f, 1f, 1f);//×ªÏò
+                transform.localScale = new Vector3(-1f, 1f, 1f);//×ªï¿½ï¿½
             }
             position.x -= moveSpeed * Time.fixedDeltaTime;
         }
-        else if (Input.GetKey(KeyCode.RightArrow) && rtemp) //ÏòÓÒÒÆ¶¯£¬µÚËÄ´¦²»Í¬
+        else if (Input.GetKey(KeyCode.RightArrow) && rtemp) //ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Í¬
         {
             myAnim.SetBool("Run", true);
             if (moveSpeed > 0)
@@ -94,11 +127,11 @@ public class PlayerBlue : MonoBehaviour
             }
             position.x += moveSpeed * Time.fixedDeltaTime;
         }
-        else//²»ÒÆ¶¯²»²¥·ÅÅÜ²½¶¯»­
+        else//ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½ï¿½ï¿½
         {
             myAnim.SetBool("Run", false);
         }
-        if (isJumpPressed)  //¿ªÊ¼ÌøÔ¾
+        if (isJumpPressed)  //ï¿½ï¿½Ê¼ï¿½ï¿½Ô¾
         {
             myRigi.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             isJumpPressed = false;
@@ -106,14 +139,15 @@ public class PlayerBlue : MonoBehaviour
         }
         if (!isHurt)
         {
-            myRigi.position = position;//¸üÐÂÎ»ÖÃ
+            myRigi.position = position;//ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Enemy" && !isHurt && canBeHurt)  
+        if ((collision.tag == "Enemy" || collision.CompareTag("Trap")) && !isHurt && canBeHurt)
         {
             playerLife--;
+            HealthBar1.HealthCurrent = playerLife;
             if (playerLife >= 1)
             {
                 isHurt = true;
@@ -135,6 +169,7 @@ public class PlayerBlue : MonoBehaviour
                 isHurt = true;
                 moveSpeed = 0;
                 myAnim.SetBool("Die", true);
+                StartCoroutine("AfterDie");
             }
         }
     }
@@ -150,9 +185,10 @@ public class PlayerBlue : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.tag == "Enemy" && !isHurt && canBeHurt)
+        if ((collision.tag == "Enemy" || collision.CompareTag("Trap")) && !isHurt && canBeHurt)
         {
             playerLife--;
+            HealthBar1.HealthCurrent = playerLife;
             if (playerLife >= 1)
             {
                 isHurt = true;
@@ -174,6 +210,7 @@ public class PlayerBlue : MonoBehaviour
                 isHurt = true;
                 moveSpeed = 0;
                 myAnim.SetBool("Die", true);
+                StartCoroutine("AfterDie");
             }
         }
     }
@@ -199,5 +236,32 @@ public class PlayerBlue : MonoBehaviour
     public void SetAttackColliderOff()
     {
         attackCollider.SetActive(false);
+    }
+    IEnumerator AfterDie()
+    {
+        yield return new WaitForSeconds(1.0f);
+        mySr.material.color = new Color(mySr.color.r, mySr.color.g, mySr.color.b, 0.5f);
+        yield return new WaitForSeconds(1.0f);
+    }
+    IEnumerator Dash()
+    {
+        canDash = false;
+        isDashing = true;
+        canBeHurt = false;
+        float dashingGravity = myRigi.gravityScale;
+        myRigi.gravityScale = 0f;
+        myRigi.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+        yield return new WaitForSeconds(dashingTime);
+        myRigi.gravityScale = dashingGravity;
+        isDashing = false;
+        Vector3 targetPos = target.position;
+        Vector2 position = myRigi.position;//ï¿½ï¿½Â¼ï¿½ï¿½Ê¼Î»ï¿½ï¿½
+        if (position.x - targetPos.x > 20|| targetPos.x - position.x > 20)
+        {
+            myRigi.position = new Vector2(targetPos.x, targetPos.y);
+        }
+        yield return new WaitForSeconds(noDashTime);
+        canDash = true;
+        canBeHurt = true;
     }
 }
