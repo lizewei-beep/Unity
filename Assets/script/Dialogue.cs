@@ -22,7 +22,7 @@ public class Dialogue : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.CompareTag("Player")&& playerNpc)
+        if(collision.gameObject.CompareTag("Player")|| collision.gameObject.CompareTag("Player1") && playerNpc)
         {
             dialogueText.text = npcText;
             dialogueBox.SetActive(true);

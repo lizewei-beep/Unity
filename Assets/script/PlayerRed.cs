@@ -11,13 +11,13 @@ public class PlayerRed : MonoBehaviour
 
     public Transform target;
 
-    int playerLife;
+    public int playerLife;
     [HideInInspector]
     public Animator myAnim;
     Rigidbody2D myRigi;
     SpriteRenderer mySr;
 
-    public bool isJumpPressed, isAttack, isHurt, canBeHurt;//ÊÇ·ñÔÚÌøÔ¾¹ý³ÌÖÐ
+    public bool isJumpPressed, isAttack, isHurt, canBeHurt;//ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ô¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public int canJump;
 
     public bool canDash = true;
@@ -34,7 +34,7 @@ public class PlayerRed : MonoBehaviour
         isJumpPressed = false;
         canJump = 2;
         moveSpeed = 4.0f;
-        jumpForce = 14.0f;
+        jumpForce = 16.5f;
         isAttack = false;
         isHurt = false;
         canBeHurt = true;
@@ -46,6 +46,7 @@ public class PlayerRed : MonoBehaviour
 
     void Update()
     {
+        HealthBar.HealthCurrent = playerLife;
         if (isDashing)
         {
             return;
@@ -58,7 +59,7 @@ public class PlayerRed : MonoBehaviour
         {
             myRigi.gravityScale = 4;
         }
-        if (Input.GetKeyDown("k") && canJump>0 && !isHurt)        //ÌøÔ¾¼ì²â£¬µÚ¶þ´¦²»Í¬
+        if (Input.GetKeyDown("k") && canJump>0 && !isHurt)        //ï¿½ï¿½Ô¾ï¿½ï¿½â£¬ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½Í¬
         {
             canDash = false;
             if (canJump == 2)
@@ -72,7 +73,7 @@ public class PlayerRed : MonoBehaviour
             canJump--;
 
         }
-        if (Input.GetKeyDown("j") && !isHurt)//²»Í¬
+        if (Input.GetKeyDown("j") && !isHurt)//ï¿½ï¿½Í¬
         {
             myAnim.SetTrigger("Attack");
             isAttack = true;
@@ -89,7 +90,7 @@ public class PlayerRed : MonoBehaviour
             return;
         }
         Vector3 targetPos = target.position;
-        Vector2 position = myRigi.position;//¼ÇÂ¼³õÊ¼Î»ÖÃ
+        Vector2 position = myRigi.position;//ï¿½ï¿½Â¼ï¿½ï¿½Ê¼Î»ï¿½ï¿½
         bool rtemp = true;
         bool ltemp = true;
         if (position.x - targetPos.x > 20)
@@ -105,16 +106,16 @@ public class PlayerRed : MonoBehaviour
             rtemp = true;
             ltemp = true;
         }
-        if (Input.GetKey("a") && ltemp) //Ïò×óÒÆ¶¯£¬µÚÈý´¦²»Í¬
+        if (Input.GetKey("a") && ltemp) //ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬
         {
             myAnim.SetBool("Run", true);
             if (moveSpeed > 0)
             {
-                transform.localScale = new Vector3(-1f, 1f, 1f);//×ªÏò
+                transform.localScale = new Vector3(-1f, 1f, 1f);//×ªï¿½ï¿½
             }
             position.x -= moveSpeed * Time.fixedDeltaTime;
         }
-        else if (Input.GetKey("d") && rtemp) //ÏòÓÒÒÆ¶¯£¬µÚËÄ´¦²»Í¬
+        else if (Input.GetKey("d") && rtemp) //ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Í¬
         {
             myAnim.SetBool("Run", true);
             if (moveSpeed > 0)
@@ -123,11 +124,11 @@ public class PlayerRed : MonoBehaviour
             }
             position.x += moveSpeed * Time.fixedDeltaTime;
         }
-        else//²»ÒÆ¶¯²»²¥·ÅÅÜ²½¶¯»­
+        else//ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½ï¿½ï¿½
         {
             myAnim.SetBool("Run", false);
         }
-        if (isJumpPressed)  //¿ªÊ¼ÌøÔ¾
+        if (isJumpPressed)  //ï¿½ï¿½Ê¼ï¿½ï¿½Ô¾
         {
             myRigi.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             isJumpPressed = false;
@@ -135,11 +136,19 @@ public class PlayerRed : MonoBehaviour
         }
         if (!isHurt)
         {
-            myRigi.position = position;//¸üÐÂÎ»ÖÃ
+            myRigi.position = position;//ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if((collision.tag == "Water"))
+        {
+            playerLife = 0;
+            isHurt = true;
+            moveSpeed = 0;
+            myAnim.SetBool("Die", true);
+            StartCoroutine("AfterDie");
+        }
         if ((collision.tag == "Enemy" || collision.CompareTag("Trap")) && !isHurt && canBeHurt)
         {
             playerLife--;
@@ -181,6 +190,14 @@ public class PlayerRed : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
+        if ((collision.tag == "Water"))
+        {
+            playerLife = 0;
+            isHurt = true;
+            moveSpeed = 0;
+            myAnim.SetBool("Die", true);
+            StartCoroutine("AfterDie");
+        }
         if ((collision.tag == "Enemy" || collision.CompareTag("Trap")) && !isHurt && canBeHurt)
         {
             playerLife--;
@@ -250,7 +267,7 @@ public class PlayerRed : MonoBehaviour
         myRigi.gravityScale = dashingGravity;
         isDashing = false;
         Vector3 targetPos = target.position;
-        Vector2 position = myRigi.position;//¼ÇÂ¼³õÊ¼Î»ÖÃ
+        Vector2 position = myRigi.position;//ï¿½ï¿½Â¼ï¿½ï¿½Ê¼Î»ï¿½ï¿½
         if (position.x - targetPos.x > 20 || targetPos.x - position.x > 20)
         {
             myRigi.position = new Vector2(targetPos.x, targetPos.y);

@@ -50,6 +50,8 @@ MonoBehaviour:
   smoothing: 5
   minPosition: {x: -68, y: -11}
   maxPosition: {x: 1200, y: 240}
+  disX: 0
+  disY: 0
 --- !u!1 &7833724915067886812
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,7 +120,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 7
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
