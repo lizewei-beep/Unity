@@ -9,10 +9,11 @@ public class RedButton : MonoBehaviour
     {
         playerScript = GetComponentInParent<PlayerRed>();
     }
-    private void OnTriggerEnter2D(Collider2D collision)//¼ì²â´¥ÅöµØ°å£¬ÓëÌøÔ¾ÓÐÐ­×÷
+    private void OnTriggerEnter2D(Collider2D collision)//ï¿½ï¿½â´¥ï¿½ï¿½ï¿½Ø°å£¬ï¿½ï¿½ï¿½ï¿½Ô¾ï¿½ï¿½Ð­ï¿½ï¿½
     {
         if (collision.tag == "Ground")
         {
+            playerScript.moveSpeed = 4;
             playerScript.canJump = 2;
             playerScript.myAnim.SetBool("Jump", false);
             playerScript.canDash = true;
