@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 450473434241751988}
   m_Layer: 6
   m_Name: PlayerBlue
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -167,7 +167,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 743870719
-  m_SortingLayer: 9
+  m_SortingLayer: 10
   m_SortingOrder: 0
   m_Sprite: {fileID: -228240802, guid: 1d335316d77172f4f98a1147d63c214f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -256,6 +256,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackCollider: {fileID: 7240006150723671729}
   target: {fileID: 0}
+  playerLife: 0
   myAnim: {fileID: 0}
   isJumpPressed: 0
   isAttack: 0

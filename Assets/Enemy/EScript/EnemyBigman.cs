@@ -201,7 +201,7 @@ public class EnemyBigman : MonoBehaviour
         {
             myAnim.SetTrigger("Attack2");
         }
-        if (enemyLife < 10) 
+        if (enemyLife < 20) 
         {
             yield return new WaitForSeconds(1f);
         }

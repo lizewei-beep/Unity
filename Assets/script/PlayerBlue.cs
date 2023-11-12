@@ -35,7 +35,7 @@ public class PlayerBlue : MonoBehaviour
         isJumpPressed = false;
         canJump = 2;
         moveSpeed = 4.0f;
-        jumpForce = 14.0f;
+        jumpForce = 16.5f;
         isAttack = false;
         isHurt = false;
         canBeHurt = true;
@@ -144,6 +144,14 @@ public class PlayerBlue : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if ((collision.tag == "Water"))
+        {
+            playerLife = 0;
+            isHurt = true;
+            moveSpeed = 0;
+            myAnim.SetBool("Die", true);
+            StartCoroutine("AfterDie");
+        }
         if ((collision.tag == "Enemy" || collision.CompareTag("Trap")) && !isHurt && canBeHurt)
         {
             playerLife--;
@@ -185,6 +193,14 @@ public class PlayerBlue : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
+        if ((collision.tag == "Water"))
+        {
+            playerLife = 0;
+            isHurt = true;
+            moveSpeed = 0;
+            myAnim.SetBool("Die", true);
+            StartCoroutine("AfterDie");
+        }
         if ((collision.tag == "Enemy" || collision.CompareTag("Trap")) && !isHurt && canBeHurt)
         {
             playerLife--;
