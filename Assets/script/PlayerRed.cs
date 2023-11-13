@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class PlayerRed : MonoBehaviour
 {
-
-    float moveSpeed;
+    public GameObject arrowPrefab;
+    public float moveSpeed;
     float jumpForce;
     public GameObject attackCollider;
 
@@ -25,6 +26,10 @@ public class PlayerRed : MonoBehaviour
     float dashingPower = 20f;
     float dashingTime = 0.1f;
     float noDashTime = 1f;
+    int maxPLife;
+    int canCure;
+    bool canProtect;
+    int canBigFire;
     private void Awake()
     {
         myAnim = GetComponent<Animator>();
@@ -39,8 +44,12 @@ public class PlayerRed : MonoBehaviour
         isHurt = false;
         canBeHurt = true;
         playerLife = 10;
+        maxPLife = playerLife;
+        canCure = 2;
+        canProtect = true;
         HealthBar.HealthMax = playerLife;
         HealthBar.HealthCurrent = playerLife;
+        canBigFire = 3;
     }
 
 
@@ -61,6 +70,8 @@ public class PlayerRed : MonoBehaviour
         }
         if (Input.GetKeyDown("k") && canJump>0 && !isHurt)        //��Ծ��⣬�ڶ�����ͬ
         {
+            moveSpeed = 8;
+            moveSpeed = 10;
             canDash = false;
             if (canJump == 2)
             {
@@ -68,19 +79,46 @@ public class PlayerRed : MonoBehaviour
             }
             else if (canJump == 1)
             {
+                myRigi.velocity = Vector2.up * moveSpeed * 2;
                 myRigi.velocity = Vector2.up * moveSpeed * 4;
+                myRigi.velocity = Vector2.up * 16;
             }
             canJump--;
 
         }
         if (Input.GetKeyDown("j") && !isHurt)//��ͬ
         {
+            canBigFire++;
             myAnim.SetTrigger("Attack");
             isAttack = true;
+            canProtect = true;
         }
         if (Input.GetKeyDown("l") && canDash)
         {
+            myAnim.SetTrigger("Slide");
             StartCoroutine(Dash());
+        }
+        if (Input.GetKeyDown("u") && !isHurt && canBigFire > 2) 
+        {
+            canBigFire = 0;
+            myAnim.SetTrigger("Power");
+    }
+        if (Input.GetKeyDown("i") && !isHurt && canCure > 0) 
+        {
+            myAnim.SetTrigger("Cure");
+            canCure--;
+            playerLife = maxPLife < playerLife + 3 ? maxPLife : playerLife + 3;
+        }
+        if (Input.GetKeyDown("o") && !isHurt && canProtect) 
+        {
+            canProtect = false;
+            canBeHurt = false;
+            myAnim.SetBool("Protect",true);
+            StartCoroutine("ProHurt");
+        }
+        if (Input.GetKeyUp("o"))
+        {
+            myAnim.SetBool("Protect", false);
         }
     }
     private void FixedUpdate()
@@ -138,6 +176,11 @@ public class PlayerRed : MonoBehaviour
         {
             myRigi.position = position;//����λ��
         }
+    }
+    IEnumerator ProHurt()
+    {
+        yield return new WaitForSeconds(2.0f);
+        canBeHurt = true;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -275,5 +318,11 @@ public class PlayerRed : MonoBehaviour
         yield return new WaitForSeconds(noDashTime);
         canDash = true;
         canBeHurt = true;
+    }
+    public void SetFireOn()
+    {
+        Vector3 temp = new Vector3(transform.position.x, transform.position.y + 10f, transform.position.z);
+        temp = new Vector3(transform.position.x - 3f, transform.position.y, transform.position.z);
+        Instantiate(arrowPrefab, temp, transform.rotation);
     }
 }

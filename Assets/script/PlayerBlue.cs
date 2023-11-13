@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerBlue : MonoBehaviour
 {
-
-    float moveSpeed;
+    public GameObject arrowPrefab;
+    public float moveSpeed;
     float jumpForce;
     public GameObject attackCollider;
 
@@ -25,7 +25,10 @@ public class PlayerBlue : MonoBehaviour
     float dashingPower = 20f;
     float dashingTime = 0.1f;
     float noDashTime = 1f;
-
+    int maxPLife;
+    int canCure;
+    bool canProtect;
+    int canBigFire;
     private void Awake()
     {
         myAnim = GetComponent<Animator>();
@@ -40,8 +43,12 @@ public class PlayerBlue : MonoBehaviour
         isHurt = false;
         canBeHurt = true;
         playerLife = 10;
+        maxPLife = playerLife;
+        canCure = 2;
+        canProtect = true;
         HealthBar1.HealthMax = playerLife;
         HealthBar1.HealthCurrent = playerLife;
+        canBigFire = 3;
     }
 
 
@@ -49,7 +56,8 @@ public class PlayerBlue : MonoBehaviour
     {
 
         HealthBar1.HealthCurrent = playerLife;
-        if(isDashing)
+        
+        if (isDashing)
         {
             return;
         }
@@ -63,6 +71,8 @@ public class PlayerBlue : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Keypad2) && canJump>0 && !isHurt)       //��Ծ��⣬�ڶ�����ͬ
         {
+            moveSpeed = 8 ;
+            moveSpeed = 10;
             canDash = false;
             if (canJump == 2)
             {
@@ -70,19 +80,46 @@ public class PlayerBlue : MonoBehaviour
             }
             else if (canJump == 1)
             {
+                myRigi.velocity = Vector2.up * moveSpeed * 2;
                 myRigi.velocity = Vector2.up * moveSpeed * 4;
+                myRigi.velocity = Vector2.up * 16;
             }
             canJump--;
         }
         if (Input.GetKeyDown(KeyCode.Keypad1) && !isHurt)//��ͬ
         {
+            canBigFire++;
             myAnim.SetTrigger("Attack");
             isAttack = true;
+            canProtect = true;
             //canJump = false;
         }
         if (Input.GetKeyDown(KeyCode.Keypad3) && canDash)
         {
+            myAnim.SetTrigger("Slide");
             StartCoroutine(Dash());
+        }
+        if (Input.GetKeyDown(KeyCode.Keypad4) && !isHurt && canBigFire > 2) 
+        {
+            canBigFire = 0;
+            myAnim.SetTrigger("Power");
+        }
+        if (Input.GetKeyDown(KeyCode.Keypad5) && !isHurt && canCure > 0)
+        {
+            myAnim.SetTrigger("Cure");
+            canCure--;
+            playerLife = maxPLife < playerLife + 3 ? maxPLife : playerLife + 3;
+        }
+        if (Input.GetKeyDown(KeyCode.Keypad6) && !isHurt && canProtect)
+        {
+            canProtect = false;
+            canBeHurt = false;
+            myAnim.SetBool("Protect", true);
+            StartCoroutine("ProHurt");
+        }
+        if (Input.GetKeyUp(KeyCode.Keypad6))
+        {
+            myAnim.SetBool("Protect", false);
         }
     }
     private void FixedUpdate()
@@ -142,7 +179,12 @@ public class PlayerBlue : MonoBehaviour
             myRigi.position = position;//����λ��
         }
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    IEnumerator ProHurt()
+    {
+        yield return new WaitForSeconds(2.0f);
+        canBeHurt = true;
+    }
+        private void OnTriggerEnter2D(Collider2D collision)
     {
         if ((collision.tag == "Water"))
         {
@@ -279,5 +321,11 @@ public class PlayerBlue : MonoBehaviour
         yield return new WaitForSeconds(noDashTime);
         canDash = true;
         canBeHurt = true;
+    }
+    public void SetFireOn()
+    {
+        Vector3 temp = new Vector3(transform.position.x, transform.position.y + 10f, transform.position.z);
+        temp = new Vector3(transform.position.x - 3f, transform.position.y, transform.position.z);
+        Instantiate(arrowPrefab, temp, transform.rotation);
     }
 }

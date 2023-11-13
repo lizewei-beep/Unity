@@ -1,35 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 
-
-public class Sign : MonoBehaviour
+public class sign : MonoBehaviour
 {
-    public GameObject dialogBox;
-    private SpriteRenderer _spriteRenderer;
-    private BoxCollider2D _boxCollider2D;
+    public GameObject signSprite;
+    private IInteractable targetItem;
 
-    void Start()
+
+
+   
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-        _boxCollider2D = GetComponent<BoxCollider2D>();
-
-    }
-
-    
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (other.gameObject.tag == "Player")
+        if(other.CompareTag("Interactable"))
         {
-            _spriteRenderer.enabled = false;
-            _boxCollider2D.enabled = false;
-
-            // 回复玩家血量
-            other.gameObject.GetComponent<PlayerBlue>().playerLife = 5;
-
-
-
+            Debug.Log("6666!");
+            targetItem = other.GetComponent<IInteractable>();
+            targetItem.TriggerAction();
+ 
         }
     }
+
 }

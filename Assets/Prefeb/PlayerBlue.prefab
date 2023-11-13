@@ -254,6 +254,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b2a737bac71f5d49a6756bd1e92453e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  arrowPrefab: {fileID: 7842234168710134933, guid: 073b06410a3c6f146b6587d04fbd563c, type: 3}
+  moveSpeed: 0
   attackCollider: {fileID: 7240006150723671729}
   target: {fileID: 0}
   playerLife: 0

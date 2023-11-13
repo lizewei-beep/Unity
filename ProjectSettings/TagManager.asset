@@ -10,6 +10,7 @@ TagManager:
   - Trap
   - Player1
   - Water
+  - Interactable
   layers:
   - Default
   - TransparentFX
