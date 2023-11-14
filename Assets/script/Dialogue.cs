@@ -8,11 +8,9 @@ public class Dialogue : MonoBehaviour
     public GameObject dialogueBox;
     public Text dialogueText;
     public string npcText;
-    private bool playerNpc;
 
     void Start()
     {
-        playerNpc = true;
     }
 
     // Update is called once per frame
@@ -22,8 +20,11 @@ public class Dialogue : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.CompareTag("Player")|| collision.gameObject.CompareTag("Player1") && playerNpc)
-        {
+        //if(Input.GetKey(KeyCode.UpArrow))
+        if(collision.gameObject.CompareTag("Player")|| collision.gameObject.CompareTag("Player1"))
+
+            //if(collision.gameObject.CompareTag("Player")&& Input.GetKey(KeyCode.UpArrow) || collision.gameObject.CompareTag("Player1") && (Input.GetKeyDown("w")))
+            {
             dialogueText.text = npcText;
             dialogueBox.SetActive(true);
             
@@ -31,10 +32,9 @@ public class Dialogue : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player")&& playerNpc)
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Player1"))
         {
             dialogueBox.SetActive(false);
-            playerNpc = false;
         }
     }
 }

@@ -16,6 +16,7 @@ public class EnemyBigman : MonoBehaviour
     BoxCollider2D myCollider;
     SpriteRenderer mySr;
     Rigidbody2D myRigi;
+    int tempCD;
     private void Awake()
     {
         myAnim = GetComponent<Animator>();
@@ -31,6 +32,7 @@ public class EnemyBigman : MonoBehaviour
         canBeHurt = true;
         EhealthBar.HealthMax = enemyLife;
         EhealthBar.HealthCurrent = enemyLife;
+        tempCD = 0;
     }
     void Update()
     {
@@ -192,8 +194,8 @@ public class EnemyBigman : MonoBehaviour
     }
     IEnumerator AttackStorm()
     {
-        int temp = Random.Range(1, 4);
-        if (temp == 1)
+        tempCD++;
+        if (tempCD % 2 == 1) 
         {
             myAnim.SetTrigger("Attack");
         }

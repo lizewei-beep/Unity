@@ -1,0 +1,4 @@
+repository "Map@minamiya161208@cloud.cn"
+  path "/"
+    smartbranch "/main" 
+     
