@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerRed : MonoBehaviour
 {
-    public GameObject arrowPrefab;
+    public GameObject arrowPrefab, arrowPrefab2;
     public float moveSpeed;
     float jumpForce;
     public GameObject attackCollider;
@@ -109,16 +109,21 @@ public class PlayerRed : MonoBehaviour
             canCure--;
             playerLife = maxPLife < playerLife + 3 ? maxPLife : playerLife + 3;
         }
-        if (Input.GetKeyDown("o") && !isHurt && canProtect) 
+        if (Input.GetKeyDown("s") && !isHurt && canProtect) 
         {
             canProtect = false;
             canBeHurt = false;
             myAnim.SetBool("Protect",true);
             StartCoroutine("ProHurt");
         }
-        if (Input.GetKeyUp("o"))
+        if (Input.GetKeyUp("s"))
         {
             myAnim.SetBool("Protect", false);
+        }
+        if (Input.GetKeyDown("o") && !isHurt && canBigFire > 1)
+        {
+            canBigFire = 0;
+            myAnim.SetTrigger("Sword");
         }
     }
     private void FixedUpdate()
@@ -131,11 +136,11 @@ public class PlayerRed : MonoBehaviour
         Vector2 position = myRigi.position;//��¼��ʼλ��
         bool rtemp = true;
         bool ltemp = true;
-        if (position.x - targetPos.x > 20)
+        if (position.x - targetPos.x > 30)
         {
             rtemp = false;
         }
-        else if (targetPos.x - position.x > 20)
+        else if (targetPos.x - position.x > 30)
         {
             ltemp = false;
         }
@@ -311,7 +316,7 @@ public class PlayerRed : MonoBehaviour
         isDashing = false;
         Vector3 targetPos = target.position;
         Vector2 position = myRigi.position;//��¼��ʼλ��
-        if (position.x - targetPos.x > 20 || targetPos.x - position.x > 20)
+        if (position.x - targetPos.x > 30 || targetPos.x - position.x > 30 || targetPos.y - position.y > 10 || position.y - targetPos.y > 10) 
         {
             myRigi.position = new Vector2(targetPos.x, targetPos.y);
         }
@@ -324,5 +329,11 @@ public class PlayerRed : MonoBehaviour
         Vector3 temp = new Vector3(transform.position.x, transform.position.y + 10f, transform.position.z);
         temp = new Vector3(transform.position.x - 3f, transform.position.y, transform.position.z);
         Instantiate(arrowPrefab, temp, transform.rotation);
+    }
+    public void SetSwordOn()
+    {
+
+        Vector3 temp = new Vector3(transform.position.x, transform.position.y + 8f, transform.position.z);
+        Instantiate(arrowPrefab2, temp, transform.rotation);
     }
 }

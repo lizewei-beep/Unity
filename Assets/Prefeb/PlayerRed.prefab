@@ -186,6 +186,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arrowPrefab: {fileID: 2234708629627818529, guid: 3766aaa0356ac9d468f36672df0c2b38, type: 3}
+  arrowPrefab2: {fileID: 7245467712744907329, guid: a88edd208de4a684d81d6c8752cddd2b, type: 3}
   moveSpeed: 0
   attackCollider: {fileID: 4996870524987647385}
   target: {fileID: 0}

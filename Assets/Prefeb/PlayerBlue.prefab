@@ -255,6 +255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arrowPrefab: {fileID: 7842234168710134933, guid: 073b06410a3c6f146b6587d04fbd563c, type: 3}
+  arrowPrefab2: {fileID: 7245467712744907329, guid: a88edd208de4a684d81d6c8752cddd2b, type: 3}
   moveSpeed: 0
   attackCollider: {fileID: 7240006150723671729}
   target: {fileID: 0}
