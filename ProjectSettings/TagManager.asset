@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Ground
+  - Enemy
+  - PlayerAttack
+  - Trap
+  - Player1
+  - Water
+  - Interactable
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Player
+  - Ground
+  - Player1
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: BackImage
+    uniqueID: 4243615649
+    locked: 0
+  - name: Sceen
+    uniqueID: 1043419757
+    locked: 0
+  - name: BackGround
+    uniqueID: 2459202753
+    locked: 0
+  - name: DecorationPlus
+    uniqueID: 3935762323
+    locked: 0
+  - name: waterfall
+    uniqueID: 2113508153
+    locked: 0
+  - name: Ground
+    uniqueID: 2821851385
+    locked: 0
+  - name: Decoration
+    uniqueID: 1535981585
+    locked: 0
+  - name: Trap
+    uniqueID: 224766651
+    locked: 0
+  - name: Water
+    uniqueID: 430265683
+    locked: 0
+  - name: Player
+    uniqueID: 743870719
+    locked: 0
